@@ -2,9 +2,8 @@
 
 t_flags g_flags = { 0 };
 
-char    **process_arguments(int argc, char *argv[], int *exitcode) {
+int process_arguments(int argc, char *argv[], char ***hosts) {
     int     opt, idx, nmemb;
-    char    **hosts;
 
     struct option long_opts[] = {
         {"verbose", no_argument,    NULL, 'v'},
@@ -18,47 +17,45 @@ char    **process_arguments(int argc, char *argv[], int *exitcode) {
                 g_flags.verbose = 1;
                 break;
             case '?':
-                if (optopt == '?') {
-                    *exitcode = print_help();
-                    return NULL;
-                }
-                *exitcode = print_hint();
-                return NULL;
+                if (optopt == '?')
+                    return print_help();
+                return print_hint();
             default:
-                if (g_flags.help == 1) {
-                    *exitcode = print_help();
-                    return NULL;
-                }
+                if (g_flags.help == 1)
+                    return print_help();
                 break;
         }
     }
 
     if (optind >= argc) {
         fprintf(stderr, "ft_ping: missing host operand\n");
-        *exitcode = print_hint();
-        return NULL;
+        return print_hint();
     }
 
     nmemb =  argc - optind;
-    hosts = calloc(nmemb, sizeof(char *));
+    *hosts = calloc(nmemb, sizeof(char *));
     for (int i = 0; i < nmemb; i++) {
-        hosts[i] = argv[optind++];
-        printf("%s\n", hosts[i]);
+        (*hosts)[i] = argv[optind++];
+        printf("%s\n", (*hosts)[i]);
     }
 
-    return hosts;
+    return 0;
 }
 
-// int ft_ping(t_flags flags) {
+// int ft_ping(char *host) {
 
 // }
 
 int main(int argc, char *argv[]) {
-    int     exitcode = 0;
-    char    **hosts __attribute__((cleanup(free_hosts)));
+    int     exit_status = 0;
+    char    **hosts __attribute__((cleanup(free_hosts))) = NULL;
 
-    hosts = process_arguments(argc, argv, &exitcode);
+    exit_status = process_arguments(argc, argv, &hosts);
     if (hosts == NULL)
-        return exitcode;
-    return 0;
+        return exit_status;
+    // for (int i = 0; hosts[i] != NULL && exit_status != 1; i++) {
+    //     exit_status = ft_ping(hosts[i]);
+    // }
+
+    return exit_status;
 }
