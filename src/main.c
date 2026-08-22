@@ -3,7 +3,7 @@
 t_flags g_flags = { 0 };
 
 char    **process_arguments(int argc, char *argv[], int *exitcode) {
-    int     opt, idx;
+    int     opt, idx, nmemb;
     char    **hosts;
 
     struct option long_opts[] = {
@@ -12,7 +12,7 @@ char    **process_arguments(int argc, char *argv[], int *exitcode) {
         {0, 0, 0, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "v:", long_opts, &idx)) != -1) {
+    while ((opt = getopt_long(argc, argv, "v", long_opts, &idx)) != -1) {
         switch (opt) {
             case 'v':
                 g_flags.verbose = 1;
@@ -33,16 +33,18 @@ char    **process_arguments(int argc, char *argv[], int *exitcode) {
         }
     }
 
-    printf("%d\n", optind);
     if (optind >= argc) {
         fprintf(stderr, "ft_ping: missing host operand\n");
         *exitcode = print_hint();
         return NULL;
     }
 
-    hosts = calloc((argc - optind), sizeof(char *));
-    for (int i = 0; i < (argc - optind); i++)
-        hosts[i] = argv[optind];
+    nmemb =  argc - optind;
+    hosts = calloc(nmemb, sizeof(char *));
+    for (int i = 0; i < nmemb; i++) {
+        hosts[i] = argv[optind++];
+        printf("%s\n", hosts[i]);
+    }
 
     return hosts;
 }
