@@ -20,14 +20,14 @@ char    **process_arguments(int argc, char *argv[], int *exitcode) {
             case '?':
                 if (optopt == '?') {
                     *exitcode = print_help();
-                    return 0;
+                    return NULL;
                 }
                 *exitcode = print_hint();
                 return NULL;
             default:
                 if (g_flags.help == 1) {
                     *exitcode = print_help();
-                    return 0;
+                    return NULL;
                 }
                 break;
         }
