@@ -1,6 +1,6 @@
 NAME = ft_ping
 HEADER = ft_ping.h
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -Werror -g -std=gnu17
 
 SOURCES_DIR = src
 OBJECTS_DIR = obj
