@@ -1,0 +1,62 @@
+Modifiche Makefile basate su nuove conoscenze:
+- l'header non deve essere passato come dipendenza in fase di linking perchè, se si ha già nella fase di compilazione,
+le modifiche verranno direttamente embeddate dentro i .o. 
+- usare la '|' dice di controllare solo il contenuto e non il timestamp della dipendenza. È importante principalmente per
+le cartelle come quella dei file .o perchè, dato che ogni volta che vi entra un file il timestamp della cartella viene modificato,
+questo "cambiamento" triggera nuovamente la fase compilazione.
+
+Scaletta programma ft_ping:
+1. parsing degli argomenti per trovare flags e hostnames
+2. creare socket (ricordarsi di chiuderlo)
+3. drop sudo
+4. risolvuzione dei target
+5. mandare prima richiesta
+6. loop della select di invio e ricezione
+    6.1 definizione timeout
+    6.2 reinvio se oltrepassato il timeout
+    6.3 ricezione se il socket è in lettura
+7. print del resoconto
+
+
+1. parsing degli argomenti per trovare flags e hostnames:
+...
+
+2. creare socket (ricordarsi di chiuderlo):
+int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
+La funzione socket crea un socket di trasmissione e ascolto:
+
+AF_INET -> definisce che il layer network deve corrispondere al protocollo di tipo ipv4.
+SOCK_RAW -> definisce che il pacchetto non contiene il transport layer header.
+            La flag necessità di privilegi sudo perchè, non essendoci il tcp (servizio che gestisce il messaggio),
+            il kernel trasmette il contenuto del pacchetto a tutti i socket aperti per ricevere massaggi raw.
+            Dopo aver aperto il socket si possono droppare i provilegi con setuid.
+            L`eseguibile del ping stesso viene posseduto da root:root e tra le mode, la x del gruppo user viene
+            sostituita dalla s per permettere al processo di avere il root userid sempre associato indipendentepente
+            dall`utente che lo lancia.
+IPPROTO_ICMP -> definisce che il pacchetto è di tipo icmp. Con l`header icmp che segue subito l`header ip.
+
+[inserire immagine del pacchetto]
+
+3. drop sudo:
+...
+
+4. risolvuzione dei target:
+getaddrinfo(target, NULL, &hints, &res)
+La funzione risolve il target passato (e se necessario traduce il domani name) in forma binaria
+e inserisce i bytes nella variabile ai_addr nella struttura res di tipo addrinfo.
+
+inetntop(AF_INET, &target->addr.sin_addr, target->ip, sizeof(target->ip))
+La funzione viene utilizzata per trasformare la versione binaria dell`ip in una stringa contenente il corrispettivo numerico
+es. "192.168.1.14" e la salva, in questo caso, in target->ip.
+
+5. mandare prima richiesta
+il primo pacchetto bisogna mandarlo prima del loop per evitare che la select aspetti un secondo prima di inviare la prima richiesta.
+
+6. loop della select di invio e ricezione:
+    6.1 definizione timeout:
+    (Il ping invia un pacchetto al secondo e non quando il socket diventa in scrittura.)
+    L'intervallo di attesa viene passato alla select come struttura timeval e viene calcolato:
+        1 sec - (adesso - il momento in cui è stato mandato il pacchetto)
+
+fdset è una maschera binaria grande quanto il numero massimo di socket sulla macchina (1024).
+Tutti i bit vengono settati a 0 con fd_zero e poi i singoli bit vengono settati a 1 passando il socket da osservare a ft_set

@@ -1,9 +1,11 @@
 {
   "name": "ft_ping",
-  "image": "mcr.microsoft.com/vscode/devcontainers/cpp:bullseye",
+  "image": "mcr.microsoft.com/vscode/devcontainers/cpp:trixie",
   "remoteUser": "vscode",
-  "runArgs": ["--cap-add=NET_RAW"],
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y inetutils-ping",
+  "runArgs": [
+    "--cap-add=NET_RAW"
+  ],
+  "postCreateCommand": "sh .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
