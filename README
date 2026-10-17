@@ -1,3 +1,5 @@
+Whats the difference between inetutils and iputils
+
 Modifiche Makefile basate su nuove conoscenze:
 - l'header non deve essere passato come dipendenza in fase di linking perchè, se si ha già nella fase di compilazione,
 le modifiche verranno direttamente embeddate dentro i .o. 
@@ -60,3 +62,9 @@ il primo pacchetto bisogna mandarlo prima del loop per evitare che la select asp
 
 fdset è una maschera binaria grande quanto il numero massimo di socket sulla macchina (1024).
 Tutti i bit vengono settati a 0 con fd_zero e poi i singoli bit vengono settati a 1 passando il socket da osservare a ft_set
+
+
+Note:
+il ping di inwtutils usa la libreria argp invece di getopt
+getopt (POSIX, available on every Unix)
+- argp (GNU only: built into glibc, and other systems use - gnulib's copy, like your inetutils build)

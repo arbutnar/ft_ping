@@ -1,11 +1,13 @@
 #ifndef FT_PING_H
 #define FT_PING_H
 
-#include <getopt.h>
+#include <argp.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sysexits.h>
 #include <unistd.h>
 
 #include <errno.h>
@@ -14,19 +16,15 @@
 #include <sys/socket.h>
 
 typedef struct {
-  int verbose;
-  int help;
-} t_flags;
+  unsigned nhosts;
+  char** hosts;
 
-// print.c
-int print_hint();
-int print_help();
+  unsigned count;
+  unsigned size;
+  bool verbose;
+} t_ping;
 
-// utils.c
-void free_hosts(char*** hosts);
+// parse.c
+void parse_args(int argc, char* argv[], t_ping* ping);
 
-// icmp.c
-int init_icmp_socket(void);
-int send_echo_request(int sockfd, struct sockaddr_in* dest, uint16_t seq);
-
-#endif /* FT_PING_H ****/
+#endif /* FT_PING_H */
