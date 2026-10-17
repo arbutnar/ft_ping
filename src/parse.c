@@ -9,18 +9,28 @@ static struct argp_option options[] = {
     {"size", 's', "NUMBER", 0, "send NUMBER data octets", 0},
     {0}};
 
+void return_invalid_value(struct argp_state* state, char* nptr, char* endptr) {
+  argp_failure(state, EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", nptr,
+               endptr);
+}
+
 static error_t parse_opt(int key, char* arg, struct argp_state* state) {
   t_ping* ping = state->input;
+  char* endptr;
 
   switch (key) {
     case 'v':
       ping->verbose = true;
       break;
     case 'c':
-      ping->count = atoi(arg);
+      ping->count = strtoul(arg, &endptr, 0);
+      if (*endptr != '\0')
+        return_invalid_value(state, arg, endptr);
       break;
     case 's':
-      ping->size = atoi(arg);
+      ping->size = strtoul(arg, &endptr, 0);
+      if (*endptr != '\0')
+        return_invalid_value(state, arg, endptr);
       break;
     case ARGP_KEY_ARGS:  // all remaining non-option arguments
       ping->hosts = state->argv + state->next;

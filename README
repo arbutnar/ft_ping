@@ -8,9 +8,9 @@ le cartelle come quella dei file .o perchè, dato che ogni volta che vi entra un
 questo "cambiamento" triggera nuovamente la fase compilazione.
 
 Scaletta programma ft_ping:
-1. parsing degli argomenti per trovare flags e hostnames
+1. parsing degli argomenti per trovare flags e hostnames ✅
 2. creare socket (ricordarsi di chiuderlo)
-3. drop sudo
+<!-- 3. drop sudo -->
 4. risolvuzione dei target
 5. mandare prima richiesta
 6. loop della select di invio e ricezione
@@ -29,7 +29,7 @@ La funzione socket crea un socket di trasmissione e ascolto:
 
 AF_INET -> definisce che il layer network deve corrispondere al protocollo di tipo ipv4.
 SOCK_RAW -> definisce che il pacchetto non contiene il transport layer header.
-            La flag necessità di privilegi sudo perchè, non essendoci il tcp (servizio che gestisce il messaggio),
+            La flag necessita di privilegi sudo perchè, non essendoci il tcp (servizio che gestisce il messaggio),
             il kernel trasmette il contenuto del pacchetto a tutti i socket aperti per ricevere massaggi raw.
             Dopo aver aperto il socket si possono droppare i provilegi con setuid.
             L`eseguibile del ping stesso viene posseduto da root:root e tra le mode, la x del gruppo user viene
@@ -44,7 +44,7 @@ IPPROTO_ICMP -> definisce che il pacchetto è di tipo icmp. Con l`header icmp ch
 
 4. risolvuzione dei target:
 getaddrinfo(target, NULL, &hints, &res)
-La funzione risolve il target passato (e se necessario traduce il domani name) in forma binaria
+La funzione risolve il target passato (e se necessario traduce il domain name) in forma binaria
 e inserisce i bytes nella variabile ai_addr nella struttura res di tipo addrinfo.
 
 inetntop(AF_INET, &target->addr.sin_addr, target->ip, sizeof(target->ip))

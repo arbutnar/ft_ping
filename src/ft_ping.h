@@ -2,6 +2,7 @@
 #define FT_PING_H
 
 #include <argp.h>
+#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,9 +19,11 @@
 typedef struct {
   unsigned nhosts;
   char** hosts;
+  struct sockaddr_in dest_addr;
+  char dest_ip[INET_ADDRSTRLEN];
 
-  unsigned count;
-  unsigned size;
+  unsigned long count;
+  unsigned long size;
   bool verbose;
 } t_ping;
 
