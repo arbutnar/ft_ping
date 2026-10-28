@@ -1,6 +1,6 @@
 NAME = ft_ping
 CC = gcc
-FLAGS = -Wall -Wextra -Werror -g -std=gnu17
+FLAGS = -Wall -Wextra -Werror -Wconversion -g -std=gnu17
 
 SOURCES_DIR = src
 OBJECTS_DIR = build
@@ -19,6 +19,9 @@ $(OBJECTS_DIR)/%.o: $(SOURCES_DIR)/%.c $(HEADERS) | $(OBJECTS_DIR)
 
 $(OBJECTS_DIR):
 	mkdir -p $@
+
+install: $(NAME)
+	sudo install -o root -g root -m 4755 $(NAME) /usr/local/bin/$(NAME)
 
 clean:
 	rm -rf $(OBJECTS_DIR)
